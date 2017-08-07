@@ -1,16 +1,19 @@
 /**
  * Created by sun on 2017/6/22.
  */
-var iosSrc = '';
+var iosSrc = '';//Yours App Dowlod Address  .. ios and android
 var androidSrc = '';
 
-function weiChatShareFn(share,url,requestUrl,path){
-    var aliyunServerUrl = url ? url : window.location.protocol + 'path';
+/*微信jssdk前端配置
+* ----------weiChatShareFn -----------
+*share is a object
+* requestUrl is ajax get url*/
+function weiChatShareFn(share,requestUrl){
     var weiXinConfigObj;
 
     $.ajax({
         type:"get",
-        url: "requestUrl",
+        url: requestUrl,
         dataType:"json",
         data:{"url":window.location.href.split('#')[0]},
         success:function(data){
@@ -69,7 +72,7 @@ function showWelcomeWord(e,callback){ // 注册成功后填下载地址
         callback();
     }
 }
-function ajaxFn(url,data,callback){
+function ajaxFn(url,data,callback){  //简单ajax封装 基于jquery.
     $.ajax({
         url:url,
         type:'post',
