@@ -1,6 +1,7 @@
 /**
  * Created by sun on 2017/6/22.
  */
+
 var iosSrc = '';//Yours App Dowlod Address  .. ios and android
 var androidSrc = '';
 
@@ -8,8 +9,12 @@ var androidSrc = '';
 * ----------weiChatShareFn -----------
 *share is a object
 * requestUrl is ajax get url*/
-function weiChatShareFn(share,requestUrl){
-    var weiXinConfigObj;
+function wChatShareFn(share,requestUrl){
+    var wChatJssdkScript = document.createElement('script');
+    wChatJssdkScript.src = window.location.protocol + '//res.wx.qq.com/open/js/jweixin-1.2.0.js'
+    document.getElementsByTagName('head')[0].appendChild(wChatJssdkScript);
+
+    var wChatConfigObj;
 
     $.ajax({
         type:"get",
@@ -17,17 +22,17 @@ function weiChatShareFn(share,requestUrl){
         dataType:"json",
         data:{"url":window.location.href.split('#')[0]},
         success:function(data){
-            weiXinConfigObj = data;
-            console.log(weiXinConfigObj);
+            wChatConfigObj = data;
+            console.log(wChatConfigObj);
         }
     });
-    window.onload = function (weiXinConfigObj) {
+    window.onload = function (wChatConfigObj) {
         wx.config({
             debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
-            appId: weiXinConfigObj.appId, // 必填，公众号的唯一标识
-            timestamp: weiXinConfigObj.timestamp, // 必填，生成签名的时间戳
-            nonceStr: weiXinConfigObj.nonceStr, // 必填，生成签名的随机串
-            signature: weiXinConfigObj.signature,// 必填，签名，见附录1
+            appId: wChatConfigObj.appId, // 必填，公众号的唯一标识
+            timestamp: wChatConfigObj.timestamp, // 必填，生成签名的时间戳
+            nonceStr: wChatConfigObj.nonceStr, // 必填，生成签名的随机串
+            signature: wChatConfigObj.signature,// 必填，签名，见附录1
             jsApiList: ['onMenuShareTimeline',
                 'onMenuShareAppMessage'] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
         });
@@ -52,26 +57,45 @@ function weiChatShareFn(share,requestUrl){
                 success: function () {},
                 cancel: function () {}
             });
+
+            //.. some jsApiList code 
         })
     }
 }
 function showWelcomeWord(e,callback){ // 注册成功后填下载地址
 
     var obj = new Browser();
+    var hasElement = $('.click-button').find('a').length;
 
-    if(obj.is_weixin()){
-        $(e).find('a').attr('href',androidSrc);
-    }else{
-        if(obj.is_ios()){
-            $(e).find('a').attr('href',iosSrc);
-        }else{
+    if(hasElement != 0){
+        if(obj.is_weixin()){
             $(e).find('a').attr('href',androidSrc);
+        }else{
+            if(obj.is_ios()){
+                $(e).find('a').attr('href',iosSrc);
+            }else{
+                $(e).find('a').attr('href',androidSrc);
+            }
         }
+    }else {
+        $(e).on('click touchshart',function(){
+            if(obj.is_weixin()){
+                window.location.href = androidSrc;
+            }else{
+                if(obj.is_ios()){
+                    window.location.href = iosSrc;
+                }else{
+                    window.location.href = androidSrc;
+                }
+            }
+        })
     }
+    
     if(typeof callback === 'function'){
         callback();
     }
 }
+
 function ajaxFn(url,data,callback){  //简单ajax封装 基于jquery.
     $.ajax({
         url:url,
@@ -106,24 +130,24 @@ function Browser(){
     this.iosSchemsUrl = '';
     this.androidSchemsUrl = '';
 }
-Browser.prototype.is_weixin = function(){
+Browser.prototype.is_weixin = function(){   //is weixin?
     var ua = this.u.toLowerCase();
     if(ua.match(/MicroMessenger/i) == "micromessenger") {
         return true;
     } else {
         return false;
     }
-};
-Browser.prototype.is_Android = function(){
+}; 
+Browser.prototype.is_Android = function(){   //is android?
     return this.android;
 };
-Browser.prototype.is_ios = function(){
+Browser.prototype.is_ios = function(){  //is ios?
     return this.ios || this.iPhone || this.iPad;
 };
-function getDateTimeStamp (dateStr) {
+function getDateTimeStamp (dateStr) {   //get time stamp
     return Date.parse(dateStr.replace(/-/gi,"/"));
 }
-function getTaskTime(strDate) {
+function getTaskTime(strDate) {  //transform time to GMT
     if(null==strDate || ""==strDate){
         return "";
     }
@@ -143,7 +167,7 @@ function getTaskTime(strDate) {
 
     return y+"-"+m+"-"+d+" "+h+":"+minute+":"+second;
 };
-function getDateDiff (dateStr) {
+function getDateDiff (dateStr) {  //get time to now
     var publishTime = getDateTimeStamp(dateStr)/1000,
         d_seconds,
         d_minutes,
@@ -151,7 +175,6 @@ function getDateDiff (dateStr) {
         d_days,
         timeNow = parseInt(new Date().getTime()/1000),
         d,
-
         date = new Date(publishTime*1000),
         Y = date.getFullYear(),
         M = date.getMonth() + 1,
@@ -159,12 +182,13 @@ function getDateDiff (dateStr) {
         H = date.getHours(),
         m = date.getMinutes(),
         s = date.getSeconds();
+
     //小于10的在前面补0
-    if (M < 10) {M = '0' + M;}
-    if (D < 10) {D = '0' + D;}
-    if (H < 10) {H = '0' + H;}
-    if (m < 10) {m = '0' + m;}
-    if (s < 10) {s = '0' + s;}
+    if (M < 10) M = '0' + M;
+    if (D < 10) D = '0' + D;
+    if (H < 10) H = '0' + H;
+    if (m < 10) m = '0' + m;
+    if (s < 10) s = '0' + s;
 
     d = timeNow - publishTime;
     d_days = parseInt(d/86400);
@@ -235,11 +259,11 @@ Date.prototype.format = function(date_format) { // author: meizz
     return date_format;
 };
 
-function rnd(min, max){
+function rnd(min, max){  //random num min to max
     return min + Math.floor(Math.random() * (max - min + 1));
 }
 
-function getMoble() {
+function getMoble() {     //random the telephone number
     var prefixArray = new Array("130", "131", "132", "133", "135", "137", "138", "170", "187", "189");
     var i = parseInt(10 * Math.random());
     var prefix = prefixArray[i];
@@ -249,7 +273,7 @@ function getMoble() {
     return prefix;
 }
 
-function phoneNumReplace(str) {
+function phoneNumReplace(str) {  // replace phone number 
     return str.replace(/(\d{3})\d{4}(\d{4})/, '$1****$2')
 }
 
