@@ -1,6 +1,6 @@
 # js-method
 some methods for javascript developer
-# 代码前面有jssdk集成后使用分享接口的配置，因为是jquery的ajax所以不算公用js其内，没删掉留着好了。
+//代码前面有jssdk集成后使用分享接口的配置，因为是jquery的ajax所以不算公用js其内，没删掉留着好了。
 
 1.webapp检测浏览器类型——面向对象
 
