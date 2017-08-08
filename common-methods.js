@@ -1,7 +1,10 @@
 /**
  * Created by sun on 2017/6/22.
  */
-
+var wChatJssdkScript = document.createElement('script');
+wChatJssdkScript.src = window.location.protocol + '//res.wx.qq.com/open/js/jweixin-1.2.0.js'
+document.getElementsByTagName('head')[0].appendChild(wChatJssdkScript);
+    
 var iosSrc = '';//Yours App Dowlod Address  .. ios and android
 var androidSrc = '';
 
@@ -10,10 +13,6 @@ var androidSrc = '';
 *share is a object
 * requestUrl is ajax get url*/
 function wChatShareFn(share,requestUrl){
-    var wChatJssdkScript = document.createElement('script');
-    wChatJssdkScript.src = window.location.protocol + '//res.wx.qq.com/open/js/jweixin-1.2.0.js'
-    document.getElementsByTagName('head')[0].appendChild(wChatJssdkScript);
-
     var wChatConfigObj;
 
     $.ajax({
